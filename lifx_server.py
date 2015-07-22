@@ -31,13 +31,12 @@ sock.listen(1)
 print("Socket now listening")
 try:
     while 1:
+        light = lifx.get_lights()[0]
         conn, addr = sock.accept()
         print("Connected to client")
-        light = lifx.get_lights()[0]
         conn.send(bytes(str(light.power),"UTF-8"))
 
         while 1:
-            light = lifx.get_lights()[0]
             print("%s,%s,%s,%s" % (light.hue, light.saturation, light.brightness, light.kelvin))
             data = conn.recv(1024).decode("utf-8")
             if not data:
@@ -70,6 +69,7 @@ try:
                 lifx.set_color(lifx.BCAST,55000,0,55000,3200,1)
             elif data == "mood":
                 lifx.set_color(lifx.BCAST,55000,29100,55000,3200,2000)
+            light = lifx.get_lights()[0]
         conn.close()
 finally:
     sock.close()
