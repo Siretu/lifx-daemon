@@ -33,6 +33,7 @@ try:
     while 1:
         conn, addr = sock.accept()
         print("Connected to client")
+        light = lifx.get_lights()[0]
         conn.send(bytes(str(light.power),"UTF-8"))
 
         while 1:
