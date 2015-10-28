@@ -32,6 +32,7 @@ print("Socket now listening")
 try:
     while 1:
         light = lifx.get_lights()[0]
+        power_status = light.power
         conn, addr = sock.accept()
         print("Connected to client")
         conn.send(bytes(str(light.power),"UTF-8"))
@@ -46,9 +47,11 @@ try:
             if data == "on":
                 print("Turning on lights!")
                 lifx.set_power(lifx.BCAST, True)
+                power_status = True
             elif data == "off":
                 print("Turning off lights!")
                 lifx.set_power(lifx.BCAST, False)
+                power_status = False
             elif info[0] == "hue":
                 hue = int(info[1])
                 print("Setting hue to %d" % hue)
@@ -69,6 +72,16 @@ try:
                 lifx.set_color(lifx.BCAST,55000,0,55000,3200,1)
             elif data == "mood":
                 lifx.set_color(lifx.BCAST,55000,29100,55000,3200,2000)
+            elif data == "toggle":
+                #light = lifx.get_lights()[0]
+                print("Toggle: " + str(power_status))
+
+                if power_status:
+                    lifx.set_power(lifx.BCAST, False)
+                    power_status = False
+                else:
+                    lifx.set_power(lifx.BCAST, True)
+                    power_status = True
             light = lifx.get_lights()[0]
         conn.close()
 finally:
