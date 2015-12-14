@@ -1,4 +1,4 @@
-#!/usr/bin/python3 -u
+#!/usr/bin/python -u
 
 import lifx
 import socket
@@ -7,12 +7,10 @@ from time import sleep
 
 print("Initializing light")
 light = lifx.get_lights()[0]
-print(light.addr)
 print(light.hue)
 print(light.saturation)
 print(light.brightness)
 print(light.kelvin)
-print(light.dim)
 print("Light done")
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -35,7 +33,7 @@ try:
         power_status = light.power
         conn, addr = sock.accept()
         print("Connected to client")
-        conn.send(bytes(str(light.power),"UTF-8"))
+        conn.send(str(light.power))
 
         while 1:
             print("%s,%s,%s,%s" % (light.hue, light.saturation, light.brightness, light.kelvin))
@@ -46,11 +44,11 @@ try:
             info = data.split(":")
             if data == "on":
                 print("Turning on lights!")
-                lifx.set_power(lifx.BCAST, True)
+                light.set_power(True)
                 power_status = True
             elif data == "off":
                 print("Turning off lights!")
-                lifx.set_power(lifx.BCAST, False)
+                light.set_power(False)
                 power_status = False
             elif info[0] == "hue":
                 hue = int(info[1])
