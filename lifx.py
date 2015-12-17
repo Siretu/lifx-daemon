@@ -14,17 +14,29 @@ class Light:
         self.kelvin = js["color"]["kelvin"]
         self.power = js["power"] == "on"
 
+    def set_state(self, data):
+        headers = {'Authorization': 'Bearer %s' % lifx_token.token,
+                   'Accept': 'application/json',
+                   'Content-type': 'application/json'}
+        r = requests.put(api_url + "/state", json=data, headers=headers)
+        print "Setting state: %s" % str(r.text)
+
     def set_power(self, power):
         status = "off"
         if power:
             status = "on"
-        headers = {'Authorization': 'Bearer %s' % lifx_token.token,
-                   'Accept': 'application/json',
-                   'Content-type': 'application/json'}
         data = {"power": status,
                 "duration": 0.0}
-        r = requests.put(api_url + "/state", json=data, headers=headers)
+        self.set_state(data)
 
+    def set_color(self, hue, saturation, brightness, duration, kelvin = -1):
+        color = "hue:%f saturation:%f brightness:%f" % (hue, saturation, brightness)
+        if kelvin != -1:
+            color += " kelvin:%d" % kelvin
+        print "Setting color: %s" % color
+        data = {"color": color,
+                "duration": duration}
+        self.set_state(data)
 
 
 def get_lights():

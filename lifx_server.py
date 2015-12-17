@@ -51,35 +51,37 @@ try:
                 light.set_power(False)
                 power_status = False
             elif info[0] == "hue":
-                hue = int(info[1])
+                hue = float(info[1])
                 print("Setting hue to %d" % hue)
-                lifx.set_color(lifx.BCAST,hue,light.saturation,light.brightness,light.kelvin,1)
+                light.set_state({"color": "hue:%f" % hue})
             elif info[0] == "saturation":
-                saturation = int(info[1])
+                saturation = float(info[1])
                 print("Setting saturation to %d" % saturation)
-                lifx.set_color(lifx.BCAST,light.hue,saturation,light.brightness,light.kelvin,1)
+                light.set_state({"color": "saturation:%f" % saturation})
             elif info[0] == "brightness":
-                brightness = int(info[1])
+                brightness = float(info[1])
                 print("Setting brightness to %d" % brightness)
-                lifx.set_color(lifx.BCAST,light.hue,light.saturation,brightness,light.kelvin,1)
+                light.set_state({"color": "brightness:%f" % brightness})
             elif info[0] == "kelvin":
                 kelvin = int(info[1])
                 print("Setting kelvin to %d" % kelvin)
-                lifx.set_color(lifx.BCAST,light.hue,light.saturation,light.brightness,kelvin,1)
+                light.set_state({"color": "kelvin:%d" % kelvin})
             elif data == "default":
-                lifx.set_color(lifx.BCAST,55000,0,55000,3200,1)
+                light.set_color(0,0,1.0,1,3200)
             elif data == "mood":
-                lifx.set_color(lifx.BCAST,55000,29100,55000,3200,2000)
+                light.set_color(320,0.7,0.8,1)
             elif data == "toggle":
                 #light = lifx.get_lights()[0]
                 print("Toggle: " + str(power_status))
 
                 if power_status:
-                    lifx.set_power(lifx.BCAST, False)
+                    light.set_power(False)
                     power_status = False
                 else:
-                    lifx.set_power(lifx.BCAST, True)
+                    light.set_power(True)
                     power_status = True
+            elif data == "status":
+                print light.hue, light.saturation, light.brightness, light.kelvin
             light = lifx.get_lights()[0]
         conn.close()
 finally:
